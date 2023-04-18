@@ -34,6 +34,7 @@ declare -A INSTALLER_GRUB_THEMES=(
     [OverWatch]='ovWatch'
     [HellTaker]='myGrubTheme'
     [Tutel]='tutel'
+    [IFUDARE]='IFUDARE'
 )
 
 INSTALLER_GRUB_NAMES=($(echo ${!INSTALLER_GRUB_THEMES[*]} | tr ' ' '\n' | sort -n))
