@@ -50,6 +50,10 @@ select l in "${INSTALLER_GRUB_NAMES[@]}"; do
     fi
 done < /dev/tty
 
+if [[ $GRUB_THEME == 'default' ]]; then
+    echo "saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+fi
+
 # Select language, optional
 declare -A INSTALLER_LANGS=(
     [Chinese]=zh_CN
