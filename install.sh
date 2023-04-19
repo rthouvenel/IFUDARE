@@ -164,12 +164,11 @@ if [[ $GRUB_THEME == 'default' ]]; then
 else
     echo 'Adding theme to GRUB config'
     echo "GRUB_THEME=/boot/${GRUB_DIR}/themes/${GRUB_THEME}/theme.txt" | sudo tee -a /etc/default/grub
+    echo 'Removing theme installation files'
+    cd ..
+    rm -rf "$PWD"
+    cd
 fi
-
-echo 'Removing theme installation files'
-cd ..
-rm -rf "$PWD"
-cd
 
 echo 'Updating GRUB'
 if [[ $UPDATE_GRUB ]]; then
