@@ -50,10 +50,6 @@ select l in "${INSTALLER_GRUB_NAMES[@]}"; do
     fi
 done < /dev/tty
 
-if [[ $GRUB_THEME == 'default' ]]; then
-    echo "saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-fi
-
 # Select language, optional
 declare -A INSTALLER_LANGS=(
     [Chinese]=zh_CN
@@ -82,10 +78,13 @@ select l in "${INSTALLER_LANG_NAMES[@]}"; do
     fi
 done < /dev/tty
 
-echo "Fetching and unpacking theme"
-wget https://github.com/rthouvenel/${GRUB_THEME}/archive/refs/heads/main.zip
-unzip main.zip
-cd ${GRUB_THEME}-main
+
+if [[ $GRUB_THEME != 'default' ]]; then
+    echo "Fetching and unpacking theme"
+    wget https://github.com/rthouvenel/${GRUB_THEME}/archive/refs/heads/main.zip
+    unzip main.zip
+    cd ${GRUB_THEME}-main
+fi
 
 #if [[ "$INSTALLER_LANG" != "English" ]]; then
 #     echo "Changing language to ${INSTALLER_LANG}"
@@ -139,11 +138,13 @@ if [[ -e /etc/os-release ]]; then
     fi
 fi
 
-echo 'Creating GRUB themes directory'
-sudo mkdir -p /boot/${GRUB_DIR}/themes/${GRUB_THEME}
+if [[ $GRUB_THEME != 'default' ]]; then
+    echo 'Creating GRUB themes directory'
+    sudo mkdir -p /boot/${GRUB_DIR}/themes/${GRUB_THEME}
 
-echo 'Copying theme to GRUB themes directory'
-sudo cp -r ./theme/* /boot/${GRUB_DIR}/themes/${GRUB_THEME}
+    echo 'Copying theme to GRUB themes directory'
+    sudo cp -r ./theme/* /boot/${GRUB_DIR}/themes/${GRUB_THEME}
+fi
 
 echo 'Removing other themes from GRUB config'
 sudo sed -i '/^GRUB_THEME=/d' /etc/default/grub
@@ -157,8 +158,13 @@ sudo sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' /etc/default/grub
 echo 'Adding new line to GRUB config just in case' # optional
 echo | sudo tee -a /etc/default/grub
 
-echo 'Adding theme to GRUB config'
-echo "GRUB_THEME=/boot/${GRUB_DIR}/themes/${GRUB_THEME}/theme.txt" | sudo tee -a /etc/default/grub
+if [[ $GRUB_THEME == 'default' ]]; then
+    echo 'Adding theme to GRUB config'
+    echo "GRUB_THEME=default" | sudo tee -a /etc/default/grub
+else
+    echo 'Adding theme to GRUB config'
+    echo "GRUB_THEME=/boot/${GRUB_DIR}/themes/${GRUB_THEME}/theme.txt" | sudo tee -a /etc/default/grub
+fi
 
 echo 'Removing theme installation files'
 cd ..
